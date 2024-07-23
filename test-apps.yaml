@@ -1,38 +1,48 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
-  name: nginx-deployment
+  name: pod1
+  labels:
+    app: myapp
+    env: development
+  annotations:
+    description: "Pod running in development environment"
 spec:
-  replicas: 6
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: nginx:1.14.2
-        ports:
-        - containerPort: 80
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 5
-          periodSeconds: 10
+  containers:
+    - name: busybox
+      image: busybox
+      command: ['sh', '-c', 'while true; do echo "Pod1: Hello from development"; sleep 5; done']
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod2
+  labels:
+    app: myapp
+    env: staging
+  annotations:
+    description: "Pod running in staging environment"
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command: ['sh', '-c', 'while true; do echo "Pod2: Hello from staging"; sleep 5; done']
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod3
+  labels:
+    app: myapp
+    env: production
+  annotations:
+    description: "Pod running in production environment"
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command: ['sh', '-c', 'while true; do echo "Pod3: Hello from production"; sleep 5; done']
